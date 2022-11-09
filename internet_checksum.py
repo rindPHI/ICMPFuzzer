@@ -3,6 +3,13 @@ from typing import List, Set, Optional
 from isla.derivation_tree import DerivationTree
 from isla.language import SemPredEvalResult, StructuralPredicate, SemanticPredicate
 
+"""
+This module defines the function `predicates()` which returns an "internet_checksum"
+semantic predicate relying on the function `internet_checksum(...)`. The other functions
+are helper functions; they are all documented with docstrings and, if necessary,
+inline comments.
+"""
+
 
 def hex_to_bytes(hex_str: str) -> List[int]:
     """
