@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
         if (
             response.id == request.id
-            and response.message_type != icmp.Types.EchoRequest.type_id
+            and response.message_type == icmp.Types.EchoReply.type_id
         ):
             payload_matched = request.payload == response.payload
 
