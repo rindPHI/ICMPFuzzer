@@ -47,7 +47,7 @@ if __name__ == "__main__":
     socket.send(bytes_input)
 
     print(f"Listening for responses.")
-    time_left = 10
+    time_left = 2
     while time_left > 0:
         raw_packet, source_socket, time_left = socket.receive(time_left)
         print(f"Received response {raw_packet}")
