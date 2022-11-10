@@ -1,2 +1,2 @@
-isla-solver>=1.9.1
+isla-solver>=1.9.3
 pythonping>=1.1.4

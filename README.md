@@ -108,6 +108,48 @@ indeed checked by `ping` (at least on macOS). You could also remove the constrai
 the number of bytes in `<payload_data>` or replace with by, e.g.,
 `count(<payload_data>, "<byte>", "100")` to obtain a payload of exactly 100 bytes.
 
+## Input Repair
+
+The `ping` setting is also a good opportunity to demonstrate ISLa's input
+*repair* capabilities. Assume you want to turn the message
+
+```
+00 00 12 34 56 78 9A BC DE FF 
+```
+
+into a valid ICMP Echo Request. This requires correcting the `<type>` to "08 "
+and fixing the checksum. Doing so is easy in ISLa:
+
+```shell
+isla -O repair \
+  -i "00 00 12 34 56 78 9A BC DE FF " \
+  --constraint '<type> = "08 "' \
+  --constraint 'internet_checksum(<start>, <checksum>)' \
+  grammar.bnf internet_checksum.py
+```
+
+The expected result of the input repair is
+
+```
+08 00 27 CB 56 78 9A BC DE FF
+```
+
+We see that apart from the `<type>` and `<checksum>` fields, all message parts
+remained stable. Let's feed this input to our test target:
+
+```shell
+$ echo "08 00 27 CB 56 78 9A BC DE FF " | sudo python send_icmp.py /dev/stdin
+Request:  ICMP packet, type: 8, code: 0, checksum: 52007, id: 30806, seq: 48282, payload: b'\xde\xff' (correct checksum)
+Sending request.
+Listening for responses.
+Received response b'E\x00\n\x00\xbeV\x00\x00@\x01\x00\x00\x7f\x00\x00\x01\x7f\x00\x00\x01\x00\x00/\xcbVx\x9a\xbc\xde\xff'
+Response: ICMP packet, type: 0, code: 0, checksum: 52015, id: 30806, seq: 48282, payload: b'\xde\xff' (correct checksum)
+Payload matched.
+```
+
+This worked: The message is correctly identified as ICMP Echo Request with the
+correct checksum.
+
 ## Copyright
 
 This project is released under the GNU General Public License v3.0 (see
